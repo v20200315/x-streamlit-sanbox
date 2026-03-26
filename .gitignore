@@ -1,13 +1,30 @@
 # Python-generated files
 __pycache__/
 *.py[oc]
+*.pyd
+.Python
 build/
 dist/
 wheels/
 *.egg-info
+*.egg/
+.eggs/
+pip-wheel-metadata/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+*$py.class
 
 # Virtual environments
 .venv
+.venv*/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
 # macOS
 .DS_Store
@@ -21,10 +38,34 @@ wheels/
 .env.*
 .python-version
 
+# Logs
+*.log
+
 # Test / tooling caches
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.hypothesis/
+.tox/
+.nox/
+.cache/
 
 # Streamlit
 .streamlit/
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+
+# SQLite / local app data
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+data/
+
+# OS / miscellaneous
+Thumbs.db

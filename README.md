@@ -53,8 +53,12 @@ x-streamlit-sanbox/
   app/
     __init__.py
     config.py       # loads env vars and OpenAI config
+    db.py           # SQLite helpers (ingest rows)
     llm_graph.py    # LangGraph workflow that calls ChatGPT
-  main.py           # Streamlit entrypoint (chat UI)
+  pages/
+    01_Chat.py
+    02_Data_Collector.py
+  main.py           # Streamlit entrypoint (multipage home)
   .env              # local secrets (not committed)
   .gitignore
   pyproject.toml
@@ -74,7 +78,42 @@ uv run streamlit run main.py
 
 Then open the URL printed in the terminal (typically `http://localhost:8501`).
 
-You should see a chat interface where you can talk to ChatGPT through the LangGraph backend.
+Use the sidebar to navigate between pages:
+
+- **Chat**: talk to ChatGPT through the LangGraph backend.
+- **Data collector**: upload an Excel file, preview rows, and save all rows into SQLite.
+
+---
+
+## Data collector (Excel → SQLite)
+
+- **Upload**: `.xlsx` / `.xls`
+- **Preview**: shows the first N rows (configurable in the sidebar)
+- **Save**: inserts *all* rows into SQLite as raw JSON per row (no LLM transform)
+- **Result UI**: shows a modal dialog on success/failure; after success you can click **Upload another Excel file** to reset the uploader and ingest a new file
+
+### SQLite database location
+
+- Default DB path is `data/app.db` (you can change it in the sidebar).
+- Table name: `ingested_rows`
+
+Schema:
+
+- `id` INTEGER PRIMARY KEY
+- `source_filename` TEXT NOT NULL
+- `sheet_name` TEXT NULL
+- `row_index` INTEGER NOT NULL
+- `row_hash` TEXT NOT NULL (SHA-256 of canonical row JSON; used for dedupe)
+- `row_json` TEXT NOT NULL
+- `uploaded_at` TEXT NOT NULL (UTC ISO timestamp)
+
+Deduplication:
+
+- Inserts use `INSERT OR IGNORE` with a unique index on `(source_filename, sheet_name, row_hash)` to avoid duplicate rows when re-uploading the same content.
+
+### Git ignore note
+
+The default database directory `data/` (and `*.db` files) are ignored by git via `.gitignore`, so you won’t accidentally commit local SQLite data.
 
 ---
 
