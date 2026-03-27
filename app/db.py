@@ -1,7 +1,7 @@
+import hashlib
 import json
 import os
 import sqlite3
-import hashlib
 from datetime import datetime, timezone
 from typing import Any, Iterable
 
@@ -29,11 +29,13 @@ def init_db(conn: sqlite3.Connection) -> None:
     )
 
     existing_columns = {
-        row["name"]
-        for row in conn.execute("PRAGMA table_info(ingested_rows)").fetchall()
+        row['name']
+        for row in conn.execute('PRAGMA table_info(ingested_rows)').fetchall()
     }
-    if "row_hash" not in existing_columns:
-        conn.execute("ALTER TABLE ingested_rows ADD COLUMN row_hash TEXT NOT NULL DEFAULT ''")
+    if 'row_hash' not in existing_columns:
+        conn.execute(
+            "ALTER TABLE ingested_rows ADD COLUMN row_hash TEXT NOT NULL DEFAULT ''"
+        )
         conn.execute("UPDATE ingested_rows SET row_hash = '' WHERE row_hash IS NULL")
 
     conn.execute(
@@ -66,9 +68,9 @@ def insert_rows(
             row,
             ensure_ascii=False,
             sort_keys=True,
-            separators=(",", ":"),
+            separators=(',', ':'),
         )
-        row_hash = hashlib.sha256(row_json.encode("utf-8")).hexdigest()
+        row_hash = hashlib.sha256(row_json.encode('utf-8')).hexdigest()
         payload.append(
             (
                 source_filename,

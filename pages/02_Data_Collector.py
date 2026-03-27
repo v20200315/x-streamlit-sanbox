@@ -59,11 +59,17 @@ def main():
     st.title('Data collector')
     st.caption('Upload an Excel file, preview rows, then save all rows into SQLite.')
 
-    db_path = st.sidebar.text_input('SQLite DB path', value=os.path.join('data', 'app.db'))
-    preview_n = st.sidebar.number_input('Preview rows', min_value=1, max_value=200, value=20)
+    db_path = st.sidebar.text_input(
+        'SQLite DB path', value=os.path.join('data', 'app.db')
+    )
+    preview_n = st.sidebar.number_input(
+        'Preview rows', min_value=1, max_value=200, value=20
+    )
 
-    uploader_key = f"excel_uploader_{st.session_state.get('excel_uploader_nonce', 0)}"
-    uploaded = st.file_uploader('Upload an Excel file', type=['xlsx', 'xls'], key=uploader_key)
+    uploader_key = f'excel_uploader_{st.session_state.get("excel_uploader_nonce", 0)}'
+    uploaded = st.file_uploader(
+        'Upload an Excel file', type=['xlsx', 'xls'], key=uploader_key
+    )
     if not uploaded:
         st.info('Upload an Excel file to preview and save its rows.')
         return
@@ -86,7 +92,9 @@ def main():
         st.error(f'Failed to parse sheet: {e}')
         return
 
-    st.write({'rows': int(df.shape[0]), 'columns': int(df.shape[1]), 'sheet': sheet_name})
+    st.write(
+        {'rows': int(df.shape[0]), 'columns': int(df.shape[1]), 'sheet': sheet_name}
+    )
     st.dataframe(df.head(int(preview_n)), width='stretch')
 
     if df.shape[0] == 0:
